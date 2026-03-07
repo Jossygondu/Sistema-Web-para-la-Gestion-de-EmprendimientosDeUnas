@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema Web - Gestión de Uñas</title>
+
+    <style>
+        .dashboard {
+            background: white;
+            margin: 20px auto;
+            padding: 15px;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+       }     
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8e1f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            background-color: #c2185b;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        
+
+        button {
+            padding: 8px 15px;
+            background-color: #c2185b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #880e4f;
+        }
+        
+
+        .servicio {
+            background: white;
+            margin: 15px auto;
+            padding: 15px;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        
+    </style>
+</head>
+
+<body>
+
+    <h1>Gestión de Servicios de Uñas 💅</h1>
+
+    <div class="container">
+
+        <h2>Agregar Nuevo Servicio</h2>
+
+        <input type="text" id="nombre" placeholder="Nombre del servicio">
+        <input type="number" id="precio" placeholder="Precio">
+        <button onclick="agregarServicio()">Agregar Servicio</button>
+
+        <br><br>
+
+        <button onclick="cargarServicios()">Ver Servicios</button>
+        <h2>📊 Dashboard del Sistema</h2>
+
+<div class="servicio">
+    <h3>Total de servicios registrados</h3>
+    <p id="totalServicios">0</p>
+</div>
+
+        <div id="listaServicios"></div>
+
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:3000/servicios";
+
+        function cargarServicios() {
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    const contenedor = document.getElementById("listaServicios");
+                    contenedor.innerHTML = "";
+                    document.getElementById("totalServicios").innerText = data.length;
+
+                    data.forEach(servicio => {
+                        contenedor.innerHTML += `
+                            <div class="servicio">
+                                <h3>${servicio.nombre}</h3>
+                                <p>Precio: $${servicio.precio}</p>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function agregarServicio() {
+            const nombre = document.getElementById("nombre").value;
+            const precio = document.getElementById("precio").value;
+
+            if (!nombre || !precio) {
+                alert("Por favor completa todos los campos");
+                return;
+            }
+
+            fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ nombre, precio })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Servicio agregado correctamente 💅");
+                document.getElementById("nombre").value = "";
+                document.getElementById("precio").value = "";
+                cargarServicios();
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+
+</body>
+</html>
